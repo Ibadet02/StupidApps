@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
+import crypto from "crypto";
+
+function generateLicenseKey(): string {
+  return `SA-${crypto.randomBytes(4).toString("hex").toUpperCase()}-${crypto.randomBytes(4).toString("hex").toUpperCase()}`;
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
@@ -19,19 +24,42 @@ export async function POST(req: NextRequest) {
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
+      const email = session.customer_details?.email || "unknown";
+      const appSlug = session.metadata?.appSlug || null;
+      const isBundle = session.metadata?.type === "bundle";
 
       await prisma.purchase.create({
         data: {
-          email: session.customer_details?.email || "unknown",
+          email,
           stripeSessionId: session.id,
-          appSlug: session.metadata?.appSlug || null,
-          isBundle: session.metadata?.type === "bundle",
+          appSlug,
+          isBundle,
         },
       });
 
-      console.log(
-        `Purchase recorded: ${session.metadata?.type} - ${session.customer_details?.email}`
-      );
+      // Generate license key(s) for purchased app(s)
+      if (isBundle) {
+        const apps = await prisma.app.findMany();
+        for (const app of apps) {
+          await prisma.license.create({
+            data: {
+              key: generateLicenseKey(),
+              email,
+              appSlug: app.slug,
+            },
+          });
+        }
+      } else if (appSlug) {
+        await prisma.license.create({
+          data: {
+            key: generateLicenseKey(),
+            email,
+            appSlug,
+          },
+        });
+      }
+
+      console.log(`Purchase + license recorded: ${isBundle ? "bundle" : appSlug} - ${email}`);
     }
 
     return NextResponse.json({ received: true });

@@ -116,6 +116,21 @@ export default async function AppPage({
         </p>
       </div>
 
+      {/* Try Free Button */}
+      {app.demoUrl && (
+        <div className="text-center mb-8">
+          <Link
+            href={app.demoUrl}
+            className="inline-block bg-green-500 hover:bg-green-400 text-black font-bold px-10 py-4 rounded-xl text-lg transition-colors"
+          >
+            Try it Free
+          </Link>
+          <p className="text-sm text-foreground/40 mt-2">
+            3 free uses. No sign-up required.
+          </p>
+        </div>
+      )}
+
       {/* Description */}
       <div className="bg-card border border-white/5 rounded-2xl p-8 mb-8">
         <h2 className="text-xl font-bold mb-4">What is this madness?</h2>

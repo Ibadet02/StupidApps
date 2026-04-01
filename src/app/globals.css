@@ -45,6 +45,12 @@ body {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
 .gradient-text {
   background: linear-gradient(135deg, #8b5cf6, #f59e0b);
   -webkit-background-clip: text;

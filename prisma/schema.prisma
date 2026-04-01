@@ -21,6 +21,14 @@ model App {
   createdAt     DateTime @default(now())
 }
 
+model License {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  email     String
+  appSlug   String
+  createdAt DateTime @default(now())
+}
+
 model Purchase {
   id              String   @id @default(cuid())
   email           String

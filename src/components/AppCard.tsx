@@ -8,6 +8,7 @@ interface AppCardProps {
   price: number;
   imageUrl: string;
   featured: boolean;
+  demoUrl?: string | null;
 }
 
 export default function AppCard({
@@ -16,6 +17,7 @@ export default function AppCard({
   tagline,
   price,
   featured,
+  demoUrl,
 }: AppCardProps) {
   return (
     <Link
@@ -25,6 +27,11 @@ export default function AppCard({
       {featured && (
         <span className="absolute -top-2 -right-2 bg-accent text-black text-xs font-bold px-2 py-1 rounded-full">
           HOT
+        </span>
+      )}
+      {demoUrl && (
+        <span className="absolute -top-2 left-4 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+          TRY FREE
         </span>
       )}
       <div className="w-16 h-16 bg-primary/20 rounded-xl flex items-center justify-center text-3xl mb-4 group-hover:animate-pulse-glow">

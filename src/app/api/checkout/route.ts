@@ -16,7 +16,6 @@ export async function POST(req: NextRequest) {
       const bundlePrice = Math.round(totalValue * 0.6);
 
       const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
         line_items: [
           {
             price_data: {
@@ -51,7 +50,6 @@ export async function POST(req: NextRequest) {
     }
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
       line_items: [
         {
           price_data: {
@@ -62,7 +60,6 @@ export async function POST(req: NextRequest) {
             },
             unit_amount: app.price,
           },
-          unit_amount_decimal: undefined,
           quantity: 1,
         },
       ],

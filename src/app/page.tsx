@@ -29,6 +29,7 @@ export default async function Home() {
               price={app.price}
               imageUrl={app.imageUrl}
               featured={app.featured}
+              demoUrl={app.demoUrl}
             />
           ))}
         </div>
