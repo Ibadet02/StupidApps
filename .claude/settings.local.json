@@ -3,7 +3,14 @@
     "allow": [
       "WebFetch(domain:www.reddit.com)",
       "WebFetch(domain:stupidapps.io)",
-      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-turbopack)"
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-turbopack)",
+      "Bash(npm install:*)",
+      "Bash(npx prisma:*)",
+      "Bash(ls /home/ismayilov-i/Desktop/projects/project/src/generated/prisma/client*)",
+      "Bash(node -e \"const { PrismaClient } = require\\(''@prisma/client''\\); const p = new PrismaClient\\(\\); console.log\\(''ok''\\)\")",
+      "Bash(python3 -c \"import sqlite3; print\\(''ok''\\)\")",
+      "Bash(ls /home/ismayilov-i/Desktop/projects/project/src/generated/prisma/index*)",
+      "Bash(ls /home/ismayilov-i/Desktop/projects/project/src/generated/prisma/*.ts)"
     ]
   }
 }

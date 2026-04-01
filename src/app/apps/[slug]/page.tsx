@@ -1,0 +1,166 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { getAppBySlug, getAllApps, formatPrice } from "@/lib/apps";
+import FAQ from "@/components/FAQ";
+
+const appFAQs: Record<string, { question: string; answer: string }[]> = {
+  "slap-o-meter": [
+    {
+      question: "Will this break my phone?",
+      answer:
+        "Probably not, but we're not responsible if you go full WWE on it. Slap responsibly.",
+    },
+    {
+      question: "How accurate is the slap rating?",
+      answer:
+        "Our advanced Slap Intelligence (SI) algorithm uses your phone's accelerometer. It's at least as accurate as a horoscope.",
+    },
+    {
+      question: "Can I challenge my friends?",
+      answer:
+        "Yes! Share your slap score card on social media and watch friendships crumble over who slaps hardest.",
+    },
+  ],
+  "excuse-generator": [
+    {
+      question: "Will my boss believe these excuses?",
+      answer:
+        "They're so absurd that your boss will be too confused to question them. That's the strategy.",
+    },
+    {
+      question: "How many excuses are there?",
+      answer:
+        "AI-generated, so technically infinite. You'll never use the same excuse twice (unless it's a really good one).",
+    },
+    {
+      question: "Is there a 'relationship mode'?",
+      answer:
+        "Yes. We call it 'Survival Mode'. Use at your own risk.",
+    },
+  ],
+  "roast-my-selfie": [
+    {
+      question: "How brutal are the roasts?",
+      answer:
+        "There's a slider from 'Gentle Tease' to 'Career-Ending Burn'. Start low if you're emotionally fragile.",
+    },
+    {
+      question: "Is my photo stored anywhere?",
+      answer:
+        "Nope. Your photo is processed and immediately forgotten, just like your ex did.",
+    },
+    {
+      question: "Can I roast my friends' photos?",
+      answer:
+        "Absolutely. Upload their selfie and share the roast card. Best used at parties.",
+    },
+  ],
+};
+
+export async function generateStaticParams() {
+  const apps = await getAllApps();
+  return apps.map((app) => ({ slug: app.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const app = await getAppBySlug(slug);
+  if (!app) return { title: "App Not Found" };
+  return {
+    title: `${app.name} — StupidApps`,
+    description: app.tagline,
+  };
+}
+
+export default async function AppPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const app = await getAppBySlug(slug);
+  if (!app) notFound();
+
+  const faqs = appFAQs[slug] || [];
+
+  const emojiMap: Record<string, string> = {
+    "slap-o-meter": "👋",
+    "excuse-generator": "🤥",
+    "roast-my-selfie": "🔥",
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-12">
+      {/* Back link */}
+      <Link
+        href="/"
+        className="text-sm text-foreground/50 hover:text-foreground transition-colors mb-8 inline-block"
+      >
+        &larr; Back to all apps
+      </Link>
+
+      {/* Hero */}
+      <div className="text-center mb-12">
+        <div className="text-7xl mb-6 animate-float">
+          {emojiMap[slug] || "🤪"}
+        </div>
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+          {app.name}
+        </h1>
+        <p className="text-xl text-foreground/60 max-w-2xl mx-auto">
+          {app.tagline}
+        </p>
+      </div>
+
+      {/* Description */}
+      <div className="bg-card border border-white/5 rounded-2xl p-8 mb-8">
+        <h2 className="text-xl font-bold mb-4">What is this madness?</h2>
+        <p className="text-foreground/70 leading-relaxed">{app.description}</p>
+      </div>
+
+      {/* Price & Buy */}
+      <div className="bg-gradient-to-r from-primary/20 to-accent/20 border border-primary/20 rounded-2xl p-8 mb-8 text-center">
+        <div className="text-4xl font-extrabold mb-2 gradient-text">
+          {formatPrice(app.price)}
+        </div>
+        <p className="text-foreground/50 text-sm mb-6">
+          One-time purchase. No subscriptions. No hidden fees. Just pure
+          stupidity.
+        </p>
+        <form action="/api/checkout" method="POST">
+          <input type="hidden" name="appSlug" value={app.slug} />
+          <button
+            type="submit"
+            className="bg-accent hover:bg-accent-light text-black font-bold px-10 py-4 rounded-xl text-lg transition-colors animate-pulse-glow"
+          >
+            Buy Now
+          </button>
+        </form>
+      </div>
+
+      {/* FAQ */}
+      {faqs.length > 0 && (
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold mb-6">
+            Frequently Asked Questions
+          </h2>
+          <FAQ items={faqs} />
+        </div>
+      )}
+
+      {/* Back to catalog */}
+      <div className="text-center">
+        <Link
+          href="/"
+          className="text-primary-light hover:text-primary font-medium transition-colors"
+        >
+          &larr; See more stupid apps
+        </Link>
+      </div>
+    </div>
+  );
+}
