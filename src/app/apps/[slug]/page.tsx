@@ -30,7 +30,7 @@ const appFAQs: Record<string, { question: string; answer: string }[]> = {
     {
       question: "How many excuses are there?",
       answer:
-        "AI-generated, so technically infinite. You'll never use the same excuse twice (unless it's a really good one).",
+        "Algorithmically generated, so technically infinite. You'll never use the same excuse twice (unless it's a really good one).",
     },
     {
       question: "Is there a 'relationship mode'?",
