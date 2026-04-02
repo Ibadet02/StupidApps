@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   },
   getSoundsPath: () => ipcRenderer.invoke("get-sounds-path"),
   quitApp: () => ipcRenderer.send("quit-app"),
+  minimizeApp: () => ipcRenderer.send("minimize-app"),
   getLicense: () => ipcRenderer.invoke("get-license"),
   saveLicense: (key) => ipcRenderer.invoke("save-license", key),
   openExternal: (url) => ipcRenderer.send("open-external", url),

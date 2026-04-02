@@ -5,7 +5,7 @@ const { GlobalKeyboardListener } = require("node-global-key-listener");
 
 let mainWindow;
 let tray;
-let keyListener;
+let keyListener = null;
 let isListening = true;
 
 function createWindow() {
@@ -73,24 +73,26 @@ function createTray() {
 }
 
 function startKeyListener() {
+  if (keyListener) return;
+
+  const MOUSE_KEYS = new Set(["MOUSE LEFT", "MOUSE RIGHT", "MOUSE MIDDLE", "MOUSE X1", "MOUSE X2"]);
+
   try {
     keyListener = new GlobalKeyboardListener();
 
-    const MOUSE_KEYS = new Set(["MOUSE LEFT", "MOUSE RIGHT", "MOUSE MIDDLE", "MOUSE X1", "MOUSE X2"]);
-
     keyListener.addListener((e) => {
+      if (!isListening) return;
+      if (mainWindow.isFocused()) return;
       if (e.state === "DOWN" && !MOUSE_KEYS.has(e.name)) {
         const keyName = e.name || "UNKNOWN";
-        const windowFocused = mainWindow.isFocused();
-        mainWindow.webContents.send("global-keypress", { keyName, windowFocused });
+        mainWindow.webContents.send("global-keypress", { keyName, windowFocused: false });
       }
     });
 
-    console.log("Global key listener started successfully");
+    console.log("Global key listener started");
   } catch (err) {
-    console.error("Failed to start global key listener:", err);
-    // Fallback: use Electron's global shortcut for common keys won't work,
-    // so notify the renderer to use local keydown events instead
+    console.error("Global key listener failed:", err.message);
+    keyListener = null;
     mainWindow.webContents.send("use-local-keyboard", true);
   }
 }
@@ -112,9 +114,10 @@ app.on("window-all-closed", () => {
 });
 
 app.on("before-quit", () => {
-  if (keyListener) {
-    keyListener.kill();
-  }
+  try {
+    if (keyListener) keyListener.kill();
+  } catch {}
+  keyListener = null;
 });
 
 // IPC handlers
@@ -162,7 +165,15 @@ ipcMain.on("open-external", (_, url) => {
   require("electron").shell.openExternal(url);
 });
 
+ipcMain.on("minimize-app", () => {
+  mainWindow.minimize();
+});
+
 ipcMain.on("quit-app", () => {
+  try {
+    if (keyListener) keyListener.kill();
+  } catch {}
+  keyListener = null;
   app.isQuitting = true;
   app.quit();
 });

@@ -239,7 +239,11 @@ window.electronAPI.onListeningChanged((value) => {
   toggleBtn.textContent = isListening ? "Pause" : "Resume";
 });
 
-// Close button
+// Window buttons
+document.getElementById("minimizeBtn").addEventListener("click", () => {
+  window.electronAPI.minimizeApp();
+});
+
 document.getElementById("closeBtn").addEventListener("click", () => {
   window.electronAPI.quitApp();
 });
