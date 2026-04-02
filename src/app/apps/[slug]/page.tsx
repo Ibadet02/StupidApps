@@ -149,6 +149,41 @@ export default async function AppPage({
         </div>
       )}
 
+      {/* Download Desktop App (for typing-sounds) */}
+      {slug === "typing-sounds" && (
+        <div className="bg-card border border-white/5 rounded-2xl p-8 mb-8">
+          <h2 className="text-xl font-bold mb-2 text-center">
+            Download Desktop App
+          </h2>
+          <p className="text-foreground/50 text-sm text-center mb-6">
+            Works system-wide — every keypress in ANY app makes a sound.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <a
+              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.2/Typing.Sound.Customizer-1.0.0-mac.zip"
+              className="flex items-center justify-center gap-2 bg-surface border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+            >
+              <span>🍎</span> macOS
+            </a>
+            <a
+              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.2/TypingSoundCustomizer-win-x64.zip"
+              className="flex items-center justify-center gap-2 bg-surface border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+            >
+              <span>🪟</span> Windows
+            </a>
+            <a
+              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.2/Typing.Sound.Customizer-1.0.0.AppImage"
+              className="flex items-center justify-center gap-2 bg-surface border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+            >
+              <span>🐧</span> Linux
+            </a>
+          </div>
+          <p className="text-xs text-foreground/30 text-center mt-3">
+            Purchase a license key to unlock unlimited use.
+          </p>
+        </div>
+      )}
+
       {/* Description */}
       <div className="bg-card border border-white/5 rounded-2xl p-8 mb-8">
         <h2 className="text-xl font-bold mb-4">What is this madness?</h2>

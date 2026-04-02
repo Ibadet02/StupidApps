@@ -229,8 +229,99 @@ window.electronAPI.onListeningChanged((value) => {
   toggleBtn.textContent = isListening ? "Pause" : "Resume";
 });
 
+// Close button
+document.getElementById("closeBtn").addEventListener("click", () => {
+  window.electronAPI.quitApp();
+});
+
+// License activation
+const API_BASE = "https://project-xi-neon-45.vercel.app";
+const licenseScreen = document.getElementById("licenseScreen");
+const mainApp = document.getElementById("mainApp");
+const licenseInput = document.getElementById("licenseInput");
+const licenseBtn = document.getElementById("licenseBtn");
+const licenseError = document.getElementById("licenseError");
+const licenseCloseBtn = document.getElementById("licenseCloseBtn");
+const buyLink = document.getElementById("buyLink");
+
+function showLicenseScreen() {
+  licenseScreen.style.display = "flex";
+  mainApp.style.display = "none";
+}
+
+function showMainApp() {
+  licenseScreen.style.display = "none";
+  mainApp.style.display = "flex";
+  window.electronAPI.licenseVerified();
+}
+
+licenseCloseBtn.addEventListener("click", () => {
+  window.electronAPI.quitApp();
+});
+
+buyLink.addEventListener("click", () => {
+  window.electronAPI.openExternal(`${API_BASE}/apps/typing-sounds`);
+});
+
+licenseBtn.addEventListener("click", async () => {
+  const key = licenseInput.value.trim();
+  if (!key) return;
+
+  licenseBtn.disabled = true;
+  licenseBtn.textContent = "Checking...";
+  licenseError.textContent = "";
+
+  try {
+    const res = await fetch(`${API_BASE}/api/license`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key, appSlug: "typing-sounds" }),
+    });
+
+    if (res.ok) {
+      await window.electronAPI.saveLicense(key);
+      showMainApp();
+    } else {
+      licenseError.textContent = "Invalid license key. Please check and try again.";
+    }
+  } catch (err) {
+    licenseError.textContent = "Could not verify. Check your internet connection.";
+  }
+
+  licenseBtn.disabled = false;
+  licenseBtn.textContent = "Activate";
+});
+
+// Allow Enter key to submit license
+licenseInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") licenseBtn.click();
+});
+
 // Initialize
 async function init() {
+  // Check if already licensed
+  const savedKey = await window.electronAPI.getLicense();
+  if (savedKey) {
+    // Verify the saved key is still valid
+    try {
+      const res = await fetch(`${API_BASE}/api/license`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key: savedKey, appSlug: "typing-sounds" }),
+      });
+      if (res.ok) {
+        showMainApp();
+      } else {
+        showLicenseScreen();
+      }
+    } catch {
+      // Offline — trust the saved key
+      showMainApp();
+    }
+  } else {
+    showLicenseScreen();
+  }
+
   soundsBasePath = await window.electronAPI.getSoundsPath();
   renderPacks();
   await loadSoundsForPack(selectedPack);

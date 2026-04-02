@@ -153,13 +153,56 @@ function SuccessContent() {
         </div>
       )}
 
+      {/* Download section for desktop apps */}
+      {purchase && purchase.licenses.some((l) => l.appSlug === "typing-sounds") && (
+        <div className="bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20 rounded-2xl p-8 mb-8">
+          <h2 className="text-lg font-bold mb-2">Download Desktop App</h2>
+          <p className="text-foreground/50 text-sm mb-4">
+            Works system-wide — every keypress in ANY app makes a sound.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            <a
+              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.2/Typing.Sound.Customizer-1.0.0-mac.zip"
+              className="flex items-center justify-center gap-2 bg-card border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+            >
+              <span>🍎</span> macOS
+            </a>
+            <a
+              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.2/TypingSoundCustomizer-win-x64.zip"
+              className="flex items-center justify-center gap-2 bg-card border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+            >
+              <span>🪟</span> Windows
+            </a>
+            <a
+              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.2/Typing.Sound.Customizer-1.0.0.AppImage"
+              className="flex items-center justify-center gap-2 bg-card border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
+            >
+              <span>🐧</span> Linux
+            </a>
+          </div>
+          <p className="text-xs text-foreground/30">
+            Enter your license key when the app asks to unlock unlimited use.
+          </p>
+        </div>
+      )}
+
       <div className="bg-card border border-white/5 rounded-2xl p-8 mb-8">
         <h2 className="text-lg font-bold mb-3">How to activate</h2>
         <ul className="text-foreground/60 text-sm space-y-2 text-left">
-          <li>1. Go to the app and use your free trial</li>
-          <li>2. When the paywall appears, click &quot;Already purchased? Enter license key&quot;</li>
-          <li>3. Paste your license key and click Activate</li>
-          <li>4. Enjoy unlimited access forever!</li>
+          {purchase && purchase.licenses.some((l) => l.appSlug === "typing-sounds") ? (
+            <>
+              <li>1. Download the desktop app above</li>
+              <li>2. Open it and enter your license key when prompted</li>
+              <li>3. Every keypress now makes sounds system-wide!</li>
+            </>
+          ) : (
+            <>
+              <li>1. Go to the app and use your free trial</li>
+              <li>2. When the paywall appears, click &quot;Already purchased? Enter license key&quot;</li>
+              <li>3. Paste your license key and click Activate</li>
+              <li>4. Enjoy unlimited access forever!</li>
+            </>
+          )}
         </ul>
       </div>
 

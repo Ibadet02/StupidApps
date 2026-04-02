@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage } = require("electron");
 const path = require("path");
+const fs = require("fs");
 const { GlobalKeyboardListener } = require("node-global-key-listener");
 
 let mainWindow;
@@ -88,7 +89,7 @@ function startKeyListener() {
 app.whenReady().then(() => {
   createWindow();
   createTray();
-  startKeyListener();
+  // Key listener starts only after license is verified (via IPC)
 
   app.on("activate", () => {
     mainWindow.show();
@@ -113,6 +114,39 @@ ipcMain.handle("get-sounds-path", () => {
     return path.join(process.resourcesPath, "sounds");
   }
   return path.join(__dirname, "sounds");
+});
+
+// License file storage
+const licensePath = path.join(app.getPath("userData"), "license.json");
+
+ipcMain.handle("get-license", () => {
+  try {
+    if (fs.existsSync(licensePath)) {
+      const data = JSON.parse(fs.readFileSync(licensePath, "utf-8"));
+      return data.key || null;
+    }
+  } catch {}
+  return null;
+});
+
+ipcMain.handle("save-license", (_, key) => {
+  fs.writeFileSync(licensePath, JSON.stringify({ key }), "utf-8");
+  return true;
+});
+
+ipcMain.on("license-verified", () => {
+  if (!keyListener) {
+    startKeyListener();
+  }
+});
+
+ipcMain.on("open-external", (_, url) => {
+  require("electron").shell.openExternal(url);
+});
+
+ipcMain.on("quit-app", () => {
+  app.isQuitting = true;
+  app.quit();
 });
 
 ipcMain.on("toggle-listening", (_, value) => {

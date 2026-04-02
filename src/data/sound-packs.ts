@@ -44,7 +44,7 @@ export const soundPacks: SoundPack[] = [
     emoji: "😩",
     description: "A different moan on every keypress. You've been warned.",
     color: "#E91E63",
-    audioFiles: Array.from({ length: 25 }, (_, i) => `/sounds/moan/moan-${i + 1}.m4a`),
+    audioFiles: Array.from({ length: 25 }, (_, i) => `/sounds/moan/moan-${i + 1}.wav`),
   },
 ];
 

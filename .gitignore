@@ -43,3 +43,9 @@ yarn-error.log*
 next-env.d.ts
 
 /src/generated/prisma
+
+# desktop app builds
+/desktop-app/dist/
+
+# prototype
+/touchscreen-prototype/__pycache__/
