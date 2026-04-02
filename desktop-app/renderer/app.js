@@ -9,6 +9,7 @@ const soundPacks = [
 let selectedPack = "moan";
 let volume = 0.7;
 let isListening = true;
+let lastGlobalKeyTime = 0;
 let keyCount = 0;
 let audioCtx = null;
 let loadedBuffers = {}; // { packId: AudioBuffer[] }
@@ -52,59 +53,59 @@ function renderPacks() {
   });
 }
 
+// Load a single sound file via main process and decode it
+async function loadSingleFile(ctx, filePath) {
+  try {
+    const arrayBuffer = await window.electronAPI.loadSoundFile(filePath);
+    if (!arrayBuffer) return null;
+    return await ctx.decodeAudioData(arrayBuffer);
+  } catch {
+    return null;
+  }
+}
+
 // Load sound files for a pack
 async function loadSoundsForPack(packId) {
   if (loadedBuffers[packId]) return; // already loaded
 
   const ctx = getAudioContext();
   const basePath = soundsBasePath || "sounds";
-
-  // Try to load numbered files: {pack}/{pack}-1.m4a, {pack}-2.m4a, etc.
-  // Also try .wav, .ogg, .mp3 extensions
-  const extensions = ["m4a", "mp3", "wav", "ogg"];
+  const sep = basePath.includes("\\") ? "\\" : "/";
+  const extensions = ["wav", "mp3", "ogg", "m4a"];
   const buffers = [];
 
-  // Try numbered files first
+  // Try numbered files first: {basePath}/{packId}/{packId}-1.wav, etc.
   for (let i = 1; i <= 30; i++) {
     let loaded = false;
     for (const ext of extensions) {
-      const filePath = `file://${basePath}/${packId}/${packId}-${i}.${ext}`;
-      try {
-        const res = await fetch(filePath);
-        if (res.ok) {
-          const buf = await res.arrayBuffer();
-          const decoded = await ctx.decodeAudioData(buf);
-          buffers.push(decoded);
-          loaded = true;
-          break;
-        }
-      } catch {
-        // file doesn't exist, skip
+      const filePath = `${basePath}${sep}${packId}${sep}${packId}-${i}.${ext}`;
+      const decoded = await loadSingleFile(ctx, filePath);
+      if (decoded) {
+        buffers.push(decoded);
+        loaded = true;
+        break;
       }
     }
     if (!loaded && i > 1) break; // stop when we run out of numbered files
   }
 
-  // Try single file: {pack}.m4a, {pack}.wav, etc.
+  // Try single file: {basePath}/{packId}.wav, etc.
   if (buffers.length === 0) {
     for (const ext of extensions) {
-      const filePath = `file://${basePath}/${packId}.${ext}`;
-      try {
-        const res = await fetch(filePath);
-        if (res.ok) {
-          const buf = await res.arrayBuffer();
-          const decoded = await ctx.decodeAudioData(buf);
-          buffers.push(decoded);
-          break;
-        }
-      } catch {
-        // skip
+      const filePath = `${basePath}${sep}${packId}.${ext}`;
+      const decoded = await loadSingleFile(ctx, filePath);
+      if (decoded) {
+        buffers.push(decoded);
+        break;
       }
     }
   }
 
   if (buffers.length > 0) {
     loadedBuffers[packId] = buffers;
+    console.log(`Loaded ${buffers.length} sounds for pack: ${packId}`);
+  } else {
+    console.log(`No sound files found for pack: ${packId}, using synth fallback`);
   }
 }
 
@@ -216,10 +217,19 @@ toggleBtn.addEventListener("click", () => {
 
 // Listen for global keypresses from main process
 window.electronAPI.onGlobalKeypress((data) => {
-  // Don't play sounds when paused or when the app window itself is focused
   if (!isListening) return;
   if (data.windowFocused) return;
+  lastGlobalKeyTime = Date.now();
   handleKeypress(data.keyName);
+});
+
+// Fallback: if global key listener fails, use local keyboard events
+window.electronAPI.onUseLocalKeyboard(() => {
+  console.log("Using local keyboard fallback — type in this window to make sounds");
+  document.addEventListener("keydown", (e) => {
+    if (!isListening) return;
+    handleKeypress(e.key.length === 1 ? e.key.toUpperCase() : e.key);
+  });
 });
 
 window.electronAPI.onListeningChanged((value) => {
@@ -253,6 +263,14 @@ function showMainApp() {
   licenseScreen.style.display = "none";
   mainApp.style.display = "flex";
   window.electronAPI.licenseVerified();
+
+  // Always enable local keyboard as a fallback — typing in the app window always works
+  document.addEventListener("keydown", (e) => {
+    if (!isListening) return;
+    // Don't double-fire if global listener is working (check if it recently fired)
+    if (Date.now() - lastGlobalKeyTime < 100) return;
+    handleKeypress(e.key.length === 1 ? e.key.toUpperCase() : e.key);
+  });
 }
 
 licenseCloseBtn.addEventListener("click", () => {

@@ -73,17 +73,26 @@ function createTray() {
 }
 
 function startKeyListener() {
-  keyListener = new GlobalKeyboardListener();
+  try {
+    keyListener = new GlobalKeyboardListener();
 
-  const MOUSE_KEYS = new Set(["MOUSE LEFT", "MOUSE RIGHT", "MOUSE MIDDLE", "MOUSE X1", "MOUSE X2"]);
+    const MOUSE_KEYS = new Set(["MOUSE LEFT", "MOUSE RIGHT", "MOUSE MIDDLE", "MOUSE X1", "MOUSE X2"]);
 
-  keyListener.addListener((e) => {
-    if (e.state === "DOWN" && !MOUSE_KEYS.has(e.name)) {
-      const keyName = e.name || "UNKNOWN";
-      const windowFocused = mainWindow.isFocused();
-      mainWindow.webContents.send("global-keypress", { keyName, windowFocused });
-    }
-  });
+    keyListener.addListener((e) => {
+      if (e.state === "DOWN" && !MOUSE_KEYS.has(e.name)) {
+        const keyName = e.name || "UNKNOWN";
+        const windowFocused = mainWindow.isFocused();
+        mainWindow.webContents.send("global-keypress", { keyName, windowFocused });
+      }
+    });
+
+    console.log("Global key listener started successfully");
+  } catch (err) {
+    console.error("Failed to start global key listener:", err);
+    // Fallback: use Electron's global shortcut for common keys won't work,
+    // so notify the renderer to use local keydown events instead
+    mainWindow.webContents.send("use-local-keyboard", true);
+  }
 }
 
 app.whenReady().then(() => {
@@ -137,6 +146,15 @@ ipcMain.handle("save-license", (_, key) => {
 ipcMain.on("license-verified", () => {
   if (!keyListener) {
     startKeyListener();
+  }
+});
+
+ipcMain.handle("load-sound-file", async (_, filePath) => {
+  try {
+    const data = fs.readFileSync(filePath);
+    return data.buffer;
+  } catch {
+    return null;
   }
 });
 

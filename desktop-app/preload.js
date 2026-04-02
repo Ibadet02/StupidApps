@@ -15,5 +15,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getLicense: () => ipcRenderer.invoke("get-license"),
   saveLicense: (key) => ipcRenderer.invoke("save-license", key),
   openExternal: (url) => ipcRenderer.send("open-external", url),
+  loadSoundFile: (filePath) => ipcRenderer.invoke("load-sound-file", filePath),
   licenseVerified: () => ipcRenderer.send("license-verified"),
+  onUseLocalKeyboard: (callback) => {
+    ipcRenderer.on("use-local-keyboard", (_, value) => callback(value));
+  },
 });

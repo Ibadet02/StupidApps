@@ -160,19 +160,19 @@ export default async function AppPage({
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <a
-              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.2/Typing.Sound.Customizer-1.0.0-mac.zip"
+              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.4/Typing.Sound.Customizer-1.0.0-mac.zip"
               className="flex items-center justify-center gap-2 bg-surface border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
             >
               <span>🍎</span> macOS
             </a>
             <a
-              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.2/TypingSoundCustomizer-win-x64.zip"
+              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.4/TypingSoundCustomizer-win-x64.zip"
               className="flex items-center justify-center gap-2 bg-surface border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
             >
               <span>🪟</span> Windows
             </a>
             <a
-              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.2/Typing.Sound.Customizer-1.0.0.AppImage"
+              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.4/Typing.Sound.Customizer-1.0.0.AppImage"
               className="flex items-center justify-center gap-2 bg-surface border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
             >
               <span>🐧</span> Linux
