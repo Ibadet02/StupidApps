@@ -55,6 +55,23 @@ const appFAQs: Record<string, { question: string; answer: string }[]> = {
         "Absolutely. Upload their selfie and share the roast card. Best used at parties.",
     },
   ],
+  "typing-sounds": [
+    {
+      question: "Will this annoy my coworkers?",
+      answer:
+        "Absolutely. That's the primary feature. We recommend the Moaning pack for maximum office chaos.",
+    },
+    {
+      question: "Does it work on mobile?",
+      answer:
+        "Yes! Tap the text area and type on your phone keyboard. Every tap makes a sound. Your bus commute will never be the same.",
+    },
+    {
+      question: "Can I use real sound files instead of synthesized ones?",
+      answer:
+        "The current version uses synthesized sounds that work instantly in your browser. No downloads needed.",
+    },
+  ],
 };
 
 export async function generateStaticParams() {
@@ -91,6 +108,7 @@ export default async function AppPage({
     "slap-o-meter": "👋",
     "excuse-generator": "🤥",
     "roast-my-selfie": "🔥",
+    "typing-sounds": "⌨️",
   };
 
   return (
