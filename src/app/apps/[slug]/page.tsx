@@ -55,6 +55,23 @@ const appFAQs: Record<string, { question: string; answer: string }[]> = {
         "Absolutely. Upload their selfie and share the roast card. Best used at parties.",
     },
   ],
+  "chargegasm": [
+    {
+      question: "How does it detect when I plug in?",
+      answer:
+        "It monitors your system's power state. The moment your charger connects or disconnects, your laptop reacts. Instantly.",
+    },
+    {
+      question: "Can I use this in a library?",
+      answer:
+        "You CAN. Should you? That's between you and your conscience. We recommend maximum volume.",
+    },
+    {
+      question: "Does it work on battery-only devices?",
+      answer:
+        "You need a device with a removable charger (laptop). Desktop PCs are always plugged in, so... no drama there.",
+    },
+  ],
   "typing-sounds": [
     {
       question: "Will this annoy my coworkers?",
@@ -109,6 +126,7 @@ export default async function AppPage({
     "excuse-generator": "🤥",
     "roast-my-selfie": "🔥",
     "typing-sounds": "⌨️",
+    "chargegasm": "🔌",
   };
 
   return (
@@ -149,24 +167,30 @@ export default async function AppPage({
         </div>
       )}
 
-      {/* Download Desktop App (for typing-sounds) */}
-      {slug === "typing-sounds" && (
+      {/* Download Desktop App */}
+      {(slug === "typing-sounds" || slug === "chargegasm") && (
         <div className="bg-card border border-white/5 rounded-2xl p-8 mb-8">
           <h2 className="text-xl font-bold mb-2 text-center">
             Download Desktop App
           </h2>
           <p className="text-foreground/50 text-sm text-center mb-6">
-            Works system-wide — every keypress in ANY app makes a sound.
+            {slug === "chargegasm"
+              ? "Your laptop reacts to charging — moans, screams, and more."
+              : "Works system-wide — every keypress in ANY app makes a sound."}
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <a
-              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.6/Typing.Sound.Customizer-1.0.0-mac.zip"
+              href={slug === "chargegasm"
+                ? "https://github.com/Ibadet02/ChargeGasm/releases/download/v1.0.0/ChargeGasm-1.0.0-mac.zip"
+                : "https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.6/Typing.Sound.Customizer-1.0.0-mac.zip"}
               className="flex items-center justify-center gap-2 bg-surface border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
             >
               <span>🍎</span> macOS
             </a>
             <a
-              href="https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.6/Typing.Sound.Customizer-1.0.0.AppImage"
+              href={slug === "chargegasm"
+                ? "https://github.com/Ibadet02/ChargeGasm/releases/download/v1.0.0/ChargeGasm-1.0.0.AppImage"
+                : "https://github.com/Ibadet02/TypingSoundCustomizer/releases/download/v1.0.6/Typing.Sound.Customizer-1.0.0.AppImage"}
               className="flex items-center justify-center gap-2 bg-surface border border-white/10 hover:border-primary/30 rounded-xl px-4 py-3 text-sm font-medium transition-colors"
             >
               <span>🐧</span> Linux

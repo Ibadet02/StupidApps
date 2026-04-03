@@ -39,6 +39,7 @@ export default function AppCard({
         {name.includes("Excuse") && "🤥"}
         {name.includes("Roast") && "🔥"}
         {name.includes("Typing") && "⌨️"}
+        {name.includes("Charge") && "🔌"}
       </div>
       <h3 className="text-xl font-bold mb-2 group-hover:text-primary-light transition-colors">
         {name}

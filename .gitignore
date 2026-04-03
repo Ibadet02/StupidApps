@@ -45,7 +45,9 @@ next-env.d.ts
 /src/generated/prisma
 
 # desktop app builds
-/desktop-app/dist/
+desktop-app/dist/
+chargegasm-app/dist/
+chargegasm-app/node_modules/
 
 # prototype
 /touchscreen-prototype/__pycache__/

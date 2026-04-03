@@ -1,0 +1,42 @@
+{
+  "name": "chargegasm",
+  "version": "1.0.0",
+  "description": "Your laptop moans when you plug it in. Screams when you unplug.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
+    "build:all": "electron-builder --mac --linux"
+  },
+  "author": "StupidApps",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.0.0"
+  },
+  "build": {
+    "appId": "io.stupidapps.chargegasm",
+    "productName": "ChargeGasm",
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "sounds/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "sounds",
+        "to": "sounds"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.entertainment",
+      "target": ["dmg", "zip"]
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Utility"
+    }
+  }
+}
